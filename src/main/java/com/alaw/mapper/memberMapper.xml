@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.alaw.mapper.memberMapper">
+    
+    <select id="LoginCheck" resultType="com.alaw.vo.memberVO">
+     select * from members 
+     where mb_id=#{mb_id} and mb_pwd=#{mb_pwd}  
+   </select>
+   
+    <select parameterType="String" id="Id_Check" resultType="com.alaw.vo.memberVO">
+	SELECT mb_id FROM members where mb_id = #{id}
+	</select>
+    
+    <insert id="joinInsert" parameterType="com.alaw.vo.memberVO">
+       insert into members(mb_id,mb_pwd,mb_name,mb_phon,mb_email,mb_joindate)
+       values (#{mb_id},#{mb_pwd},#{mb_name},#{mb_phon},#{mb_email},now())  
+   </insert>
+   
+    <insert id="join_l" parameterType="com.alaw.vo.memberVO">
+		insert into members(mb_id,mb_pwd,mb_name,mb_email,mb_joindate, law_test,
+		test_round, test_year, law_office, law_number)
+		values (#{mb_id},#{mb_pwd},#{mb_name},#{mb_email},now(), #{law_test},
+		#{test_round}, #{test_year}, #{law_office}, #{law_number})
+	</insert>
+   
+    <select id = "searchKey" resultType = "com.alaw.vo.termsVO">
+        select *from terms
+        where term_name=#{search}        
+    </select>
+    
+    <select id = "search_pr" resultType = "com.alaw.vo.precedentVO">
+        select *from precedents
+        where prec_name like #{search_word} or
+		case_name like #{search_word} or
+		prec_result like #{search_word}
+        limit 8
+    </select>
+    
+     
+    
+    <select id="docu_page" resultType="com.alaw.vo.precedentVO">
+       
+       select * from precedents
+       	where prec_seq = #{prec_seq}      		
+   </select>
+        
+   <insert id="wishlist" parameterType="com.alaw.vo.wishlistVO">
+		insert into wishlists(prec_name, case_name, reg_date, mb_id)
+		values(#{prec_name}, #{case_name}, now(), #{mb_id})
+	</insert>
+
+ 	<select id="wishlist_list" resultType="com.alaw.vo.wishlistVO">
+		select *from wishlists where mb_id = #{mb_id}
+	</select> 
+ 
+	<delete id="wish_del" parameterType="com.alaw.vo.wishlistVO">
+		delete from wishlists where prec_name=#{prec_name} and mb_id=#{mb_id}
+
+	</delete>
+
+	<insert id="insert_case" parameterType="com.alaw.vo.caseVO">
+		insert into cases(mb_id, case_title, case_date, case_place, perpetrator, case_content)
+		values(#{mb_id}, #{case_title}, now(), #{case_place}, #{perpetrator},
+		#{case_content})
+	</insert>
+
+ 	<select id="case_list" resultType="com.alaw.vo.caseVO">
+		select *from cases where mb_id = #{mb_id}
+	</select>
+    
+ 	<select id = "cosine_list" resultType = "com.alaw.vo.precedentVO">
+        select *from precedents where prec_seq = #{idx1}
+        union
+        select *from precedents where prec_seq = #{idx2}
+        union
+        select *from precedents where prec_seq = #{idx3}
+        union
+        select *from precedents where prec_seq = #{idx4}
+        union
+        select *from precedents where prec_seq = #{idx5}
+    </select>
+    
+   <delete id="case_del" parameterType="com.alaw.vo.caseVO">
+      delete from cases where case_seq=#{case_seq}
+   </delete>
+
+
+	<select id="search_type" resultType="com.alaw.vo.precedentVO">
+		select *from precedents
+		where (prec_name like #{search_word} or
+		case_name like #{search_word} or
+		prec_result like #{search_word})
+		and prec_name like #{case_type}
+
+		limit 8
+
+	</select>
+   
+   
+</mapper>
